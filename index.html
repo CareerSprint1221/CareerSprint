@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CareerSprint – Land Your Dream Job Faster with AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--purple:#7C5CFC;--pink:#F74B8B;--orange:#FF8C42;--text:#0f0f1a;--muted:#6b7280;--border:#e5e7eb;--soft:#f8f8fc}
+html{scroll-behavior:smooth}
+body{font-family:'Plus Jakarta Sans',sans-serif;color:var(--text);background:#fff;overflow-x:hidden}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:200;background:rgba(255,255,255,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 48px;height:66px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:'Manrope',sans-serif;font-weight:900;font-size:22px;letter-spacing:-0.5px;color:var(--purple);display:flex;align-items:center;gap:2px;text-decoration:none}
+.logo .sp{color:var(--pink)}
+.logo-dot{width:7px;height:7px;background:var(--pink);border-radius:50%;margin-left:2px;margin-bottom:10px}
+.nav-center{display:flex;align-items:center;gap:32px}
+.nav-center a{text-decoration:none;color:var(--muted);font-size:14px;font-weight:600;transition:color .15s}
+.nav-center a:hover{color:var(--text)}
+.nav-right{display:flex;align-items:center;gap:12px}
+.btn-ghost{background:none;border:1.5px solid var(--border);border-radius:50px;padding:9px 20px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;color:var(--text);transition:border-color .15s,color .15s}
+.btn-ghost:hover{border-color:var(--purple);color:var(--purple)}
+.btn-primary{background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff;border:none;border-radius:50px;padding:10px 24px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 16px rgba(124,92,252,.35);transition:transform .15s,box-shadow .15s}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(124,92,252,.45)}
+
+/* HERO */
+.hero{position:relative;overflow:hidden;background:linear-gradient(155deg,#ede8ff 0%,#fce4f0 50%,#ffe8d6 100%);padding:90px 48px 110px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:560px}
+.orb{position:absolute;border-radius:50%;pointer-events:none}
+.orb1{width:520px;height:520px;top:-180px;right:-140px;background:radial-gradient(circle,rgba(247,75,139,.2) 0%,transparent 65%)}
+.orb2{width:440px;height:440px;bottom:-160px;left:-100px;background:radial-gradient(circle,rgba(124,92,252,.18) 0%,transparent 65%)}
+.orb3{width:300px;height:300px;top:30px;left:15%;background:radial-gradient(circle,rgba(255,140,66,.12) 0%,transparent 65%)}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.75);backdrop-filter:blur(8px);border:1px solid rgba(124,92,252,.25);border-radius:50px;padding:6px 14px;font-size:12px;font-weight:700;color:var(--purple);margin-bottom:24px;position:relative;z-index:1}
+.pulse{width:6px;height:6px;background:var(--purple);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.4)}}
+.hero h1{font-family:'Manrope',sans-serif;font-size:clamp(38px,5.5vw,64px);font-weight:900;line-height:1.05;letter-spacing:-1.5px;color:#0f0f1a;position:relative;z-index:1;max-width:760px}
+.grad-text{background:linear-gradient(90deg,var(--purple) 0%,var(--pink) 60%,var(--orange) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{margin-top:22px;font-size:17px;color:#4a4a6a;max-width:500px;line-height:1.7;position:relative;z-index:1}
+.hero-actions{margin-top:36px;display:flex;align-items:center;gap:16px;position:relative;z-index:1;flex-wrap:wrap;justify-content:center}
+.btn-hero{background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff;border:none;border-radius:50px;padding:16px 36px;font-size:17px;font-weight:800;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:10px;box-shadow:0 6px 28px rgba(124,92,252,.45);transition:transform .2s,box-shadow .2s}
+.btn-hero:hover{transform:translateY(-3px);box-shadow:0 12px 36px rgba(124,92,252,.55)}
+.social-proof{display:flex;align-items:center;gap:12px}
+.avatars{display:flex}
+.avatars img{width:36px;height:36px;border-radius:50%;border:2.5px solid #fff;margin-left:-10px;object-fit:cover}
+.avatars img:first-child{margin-left:0}
+.sp-text{text-align:left}
+.stars-row{color:#f59e0b;font-size:14px}
+.sp-text small{font-size:12px;color:var(--muted)}
+
+/* BRANDS */
+.brands{background:#fff;padding:28px 48px;border-bottom:1px solid var(--border)}
+.brands-lbl{text-align:center;font-size:11px;font-weight:700;color:#c0c0d0;text-transform:uppercase;letter-spacing:2.5px;margin-bottom:20px}
+.brands-row{display:flex;align-items:center;justify-content:center;gap:52px;flex-wrap:wrap}
+.brand-item{font-size:17px;font-weight:800;color:#c8c8d8;letter-spacing:-0.3px;display:flex;align-items:center;gap:7px}
+
+/* FEATURES */
+.sec{padding:88px 48px}
+.sec-soft{background:var(--soft)}
+.sec-white{background:#fff}
+.sec-hdr{text-align:center;margin-bottom:56px}
+.sec-lbl{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:3px;color:var(--purple);margin-bottom:12px}
+.sec-ttl{font-family:'Manrope',sans-serif;font-size:clamp(28px,3.5vw,42px);font-weight:900;letter-spacing:-1px;color:var(--text)}
+.sec-ttl .pink{color:var(--pink)}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:1140px;margin:0 auto}
+.fcard{background:#fff;border-radius:24px;padding:28px;box-shadow:0 2px 20px rgba(0,0,0,.06);transition:transform .2s,box-shadow .2s;border:1px solid rgba(0,0,0,.04);display:flex;flex-direction:column;gap:18px}
+.fcard:hover{transform:translateY(-6px);box-shadow:0 16px 48px rgba(0,0,0,.10)}
+.fcard-hd{display:flex;align-items:center;justify-content:space-between}
+.fcard-tr{display:flex;align-items:center;gap:10px}
+.ficon{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ficon svg{width:19px;height:19px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.fcard h3{font-size:15px;font-weight:800}
+.bdg{font-size:11px;font-weight:800;padding:4px 11px;border-radius:20px}
+.bdg-g{background:#ecfdf5;color:#059669}
+.bdg-b{background:#eff6ff;color:#2563eb}
+.bdg-p{background:#ede9fe;color:#7c3aed}
+
+.cl-prev{background:#f9fafb;border-radius:14px;padding:16px;font-size:11px;color:#555;line-height:1.65;max-height:210px;overflow:hidden;position:relative;flex:1}
+.cl-prev::after{content:'';position:absolute;bottom:0;left:0;right:0;height:56px;background:linear-gradient(transparent,#f9fafb)}
+.cl-prev b{font-size:12px;color:#222}
+
+.res-wrap{border:1px solid #e5e7eb;border-radius:14px;overflow:hidden;flex:1}
+.res-inner{padding:14px;font-size:10px;color:#333;line-height:1.5;background:#fff;max-height:185px;overflow:hidden;position:relative}
+.res-inner::after{content:'';position:absolute;bottom:0;left:0;right:0;height:40px;background:linear-gradient(transparent,#fff)}
+.rname{font-size:13px;font-weight:800;text-align:center;margin-bottom:3px}
+.rmeta{text-align:center;font-size:9px;color:#999;margin-bottom:8px}
+.rsec{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid #eee;padding-bottom:2px;margin:7px 0 5px;color:#555}
+.rtabs{display:flex;gap:6px;padding:10px 14px;background:#f9fafb;border-top:1px solid #eee}
+.rtab{font-size:10px;font-weight:700;padding:4px 12px;border-radius:20px;cursor:pointer;transition:all .15s;border:none;font-family:inherit}
+.rtab.active{background:var(--purple);color:#fff}
+.rtab:not(.active){background:#f0f0f5;color:#777}
+
+.jobs-list{display:flex;flex-direction:column;gap:9px;flex:1}
+.job-row{display:flex;align-items:center;gap:10px;background:#f9fafb;border-radius:12px;padding:10px 12px}
+.jlogo{width:30px;height:30px;border-radius:8px;background:#fff;border:1px solid #eee;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12px;flex-shrink:0}
+.jinfo{flex:1;min-width:0}
+.jtitle{font-size:11px;font-weight:800}
+.jco{font-size:9px;color:#999}
+.jtags{display:flex;gap:3px;margin-top:2px}
+.jtag{font-size:8px;padding:1px 6px;border-radius:8px;background:#ede9fe;color:#7c3aed;font-weight:700}
+.jstat{font-size:9px;font-weight:800;padding:3px 9px;border-radius:12px;flex-shrink:0}
+.jstat.applied{background:var(--purple);color:#fff}
+.jstat.prog{background:#fbbf24;color:#fff}
+
+/* SHOWCASE */
+.showcase-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;max-width:1140px;margin:0 auto}
+.show-txt{margin-bottom:28px}
+.show-txt h2{font-family:'Manrope',sans-serif;font-size:clamp(22px,2.5vw,28px);font-weight:900;letter-spacing:-0.5px;margin-bottom:12px}
+.show-txt p{font-size:15px;color:var(--muted);line-height:1.7;max-width:420px}
+.gcard{border-radius:24px;padding:32px;min-height:340px;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:16px}
+.gc1{background:linear-gradient(135deg,#F74B8B 0%,#FF8C42 100%)}
+.gc2{background:linear-gradient(135deg,#FF8C42 0%,#a78bfa 100%)}
+.gen-pill{background:rgba(255,255,255,.95);backdrop-filter:blur(8px);border-radius:50px;padding:10px 20px 10px 14px;display:inline-flex;align-items:center;gap:10px;font-size:13px;font-weight:600;color:#222;box-shadow:0 4px 20px rgba(0,0,0,.12);align-self:flex-start}
+.spark-btn{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;background:linear-gradient(135deg,var(--purple),var(--pink));border-radius:50%;flex-shrink:0}
+.spark-btn svg{width:13px;height:13px;stroke:#fff;fill:none;stroke-width:2.5}
+.ans-card{background:rgba(255,255,255,.9);backdrop-filter:blur(12px);border-radius:18px;padding:20px;font-size:12px;color:#333;line-height:1.7;box-shadow:0 8px 32px rgba(0,0,0,.12)}
+.ans-ttl{font-weight:800;font-size:13px;color:#111;margin-bottom:10px}
+.ans-ttl span{color:var(--pink)}
+
+.mscreen{background:rgba(255,255,255,.93);backdrop-filter:blur(10px);border-radius:18px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.14)}
+.mscreen-hdr{background:#f8f8fc;padding:10px 14px;display:flex;align-items:center;gap:6px;border-bottom:1px solid #eee}
+.dot{width:9px;height:9px;border-radius:50%}
+.mscreen-body{padding:14px}
+.mrow{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;margin-bottom:6px;background:#f9f9fd}
+.mlogo{width:28px;height:28px;border-radius:7px;background:#fff;border:1px solid #eee;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:11px}
+.minfo{flex:1}
+.mrole{font-size:11px;font-weight:800}
+.mco{font-size:9px;color:#aaa}
+.mpct{font-size:11px;font-weight:900;color:#059669}
+.sbubble{position:absolute;bottom:20px;right:14px;background:#fff;border-radius:14px;padding:12px 14px;box-shadow:0 8px 28px rgba(0,0,0,.16);max-width:190px;font-size:11px;line-height:1.5;color:#333}
+.slbl{font-size:9px;font-weight:900;color:var(--purple);letter-spacing:1px;text-transform:uppercase;margin-bottom:5px}
+
+/* STATS */
+.stats-sec{background:linear-gradient(135deg,#1a0a3c 0%,#2d1465 100%);padding:72px 48px;text-align:center}
+.stats-sec h2{font-family:'Manrope',sans-serif;font-size:clamp(22px,3vw,36px);font-weight:900;color:#fff;max-width:640px;margin:0 auto;letter-spacing:-0.5px}
+.stats-grid{display:flex;justify-content:center;gap:56px;margin-top:52px;flex-wrap:wrap}
+.stat{text-align:center}
+.stat-n{font-family:'Manrope',sans-serif;font-size:48px;font-weight:900;letter-spacing:-2px;background:linear-gradient(135deg,#fff 0%,rgba(255,255,255,.7) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:block}
+.stat-l{font-size:14px;color:rgba(255,255,255,.55);margin-top:6px}
+
+/* HOW */
+.steps-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;max-width:1140px;margin:0 auto}
+.step{background:#fff;border-radius:20px;padding:28px 24px;text-align:center;border:1px solid rgba(0,0,0,.04);box-shadow:0 2px 16px rgba(0,0,0,.04);transition:transform .2s}
+.step:hover{transform:translateY(-4px)}
+.step-num{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff;font-family:'Manrope',sans-serif;font-size:18px;font-weight:900;display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
+.step-ico{font-size:32px;margin-bottom:12px}
+.step h4{font-size:15px;font-weight:800;margin-bottom:8px}
+.step p{font-size:13px;color:var(--muted);line-height:1.6}
+
+/* TESTIMONIALS */
+.tgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:1140px;margin:0 auto}
+.tcard{background:var(--soft);border-radius:20px;padding:28px;border:1px solid rgba(0,0,0,.05);transition:transform .2s,box-shadow .2s}
+.tcard:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.08)}
+.tcard-stars{color:#f59e0b;font-size:14px;margin-bottom:12px}
+.tcard-q{font-size:14px;color:#333;line-height:1.7;margin-bottom:18px;font-style:italic}
+.tcard-auth{display:flex;align-items:center;gap:10px}
+.tcard-auth img{width:38px;height:38px;border-radius:50%;object-fit:cover}
+.tcard-name{font-size:13px;font-weight:800}
+.tcard-role{font-size:11px;color:var(--muted)}
+.hired{font-size:10px;font-weight:700;background:#ecfdf5;color:#059669;padding:2px 8px;border-radius:10px;margin-left:auto}
+
+/* CTA */
+.cta-sec{background:linear-gradient(135deg,var(--purple) 0%,var(--pink) 60%,var(--orange) 100%);padding:80px 48px;text-align:center}
+.cta-sec h2{font-family:'Manrope',sans-serif;font-size:clamp(28px,4vw,48px);font-weight:900;color:#fff;letter-spacing:-1px;margin-bottom:16px}
+.cta-sec p{font-size:17px;color:rgba(255,255,255,.8);margin-bottom:36px;max-width:460px;margin-left:auto;margin-right:auto}
+.btn-wht{background:#fff;color:var(--purple);border:none;border-radius:50px;padding:16px 40px;font-size:17px;font-weight:800;cursor:pointer;font-family:inherit;box-shadow:0 8px 32px rgba(0,0,0,.2);transition:transform .2s,box-shadow .2s}
+.btn-wht:hover{transform:translateY(-3px);box-shadow:0 14px 40px rgba(0,0,0,.25)}
+
+/* FOOTER */
+footer{background:#0a0a18;color:rgba(255,255,255,.5);padding:56px 48px 28px}
+.footer-top{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:48px;margin-bottom:48px}
+.fbrand .logo{color:#fff;margin-bottom:14px;display:inline-flex}
+.fbrand p{font-size:13px;line-height:1.7;max-width:240px}
+.fcol h4{font-size:13px;font-weight:800;color:#fff;margin-bottom:14px}
+.fcol a{display:block;font-size:13px;color:rgba(255,255,255,.45);text-decoration:none;margin-bottom:9px;transition:color .15s}
+.fcol a:hover{color:#fff}
+.fbot{border-top:1px solid rgba(255,255,255,.08);padding-top:24px;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:rgba(255,255,255,.25);flex-wrap:wrap;gap:12px}
+.fbot-links{display:flex;gap:20px}
+.fbot-links a{color:rgba(255,255,255,.25);text-decoration:none;font-size:12px}
+.fbot-links a:hover{color:rgba(255,255,255,.5)}
+
+@media(max-width:1024px){.steps-grid{grid-template-columns:repeat(2,1fr)}.showcase-grid{grid-template-columns:1fr}}
+@media(max-width:860px){.grid3,.tgrid{grid-template-columns:1fr}.footer-top{grid-template-columns:1fr 1fr}nav{padding:0 20px}.nav-center{display:none}.hero{padding:70px 24px 90px}.sec{padding:60px 20px}}
+@media(max-width:560px){.steps-grid{grid-template-columns:1fr}.footer-top{grid-template-columns:1fr}.hero h1{font-size:34px}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="logo">Career<span class="sp">Sprint</span><span class="logo-dot"></span></a>
+  <div class="nav-center">
+    <a href="#features">Features</a>
+    <a href="#how">How It Works</a>
+    <a href="#reviews">Reviews</a>
+    <a href="#">Pricing</a>
+  </div>
+  <div class="nav-right">
+    <button class="btn-ghost">Log in</button>
+    <button class="btn-primary">Get Started Free</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+  <div class="hero-badge"><span class="pulse"></span> Trusted by 1,166,440+ job seekers</div>
+  <h1>Stop Applying for Weeks<br><span class="grad-text">Start Getting Offers in Days</span></h1>
+  <p class="hero-sub">CareerSprint finds high-match roles, tailors your resume &amp; cover letter, and auto-applies — so you go from submit to offer, fast.</p>
+  <div class="hero-actions">
+    <button class="btn-hero">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      Start for Free
+    </button>
+    <div class="social-proof">
+      <div class="avatars">
+        <img src="https://i.pravatar.cc/36?img=47" alt="">
+        <img src="https://i.pravatar.cc/36?img=23" alt="">
+        <img src="https://i.pravatar.cc/36?img=12" alt="">
+        <img src="https://i.pravatar.cc/36?img=56" alt="">
+      </div>
+      <div class="sp-text">
+        <div class="stars-row">★★★★★</div>
+        <small>Loved by 1,166,440 users</small>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BRANDS -->
+<section class="brands">
+  <p class="brands-lbl">Helping people get hired at top companies worldwide</p>
+  <div class="brands-row">
+    <div class="brand-item">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="#0052FF"><circle cx="12" cy="12" r="12"/><path d="M12 6.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zm0 9A3.5 3.5 0 1112 8a3.5 3.5 0 010 7z" fill="#fff"/></svg>
+      coinbase
+    </div>
+    <div class="brand-item">
+      <svg width="18" height="18" viewBox="0 0 168 168" fill="none"><circle cx="84" cy="84" r="84" fill="#1DB954"/><path d="M120 107.5c-1.5 2.4-4.6 3.2-7 1.8-19.1-11.7-43.2-14.4-71.5-7.9-2.7.6-5.4-1.1-6-3.8-.6-2.7 1.1-5.4 3.8-6 31-7.1 57.6-4 79.1 9.1 2.4 1.4 3.1 4.5 1.6 6.8z" fill="#fff"/></svg>
+      Spotify
+    </div>
+    <div class="brand-item">
+      <svg width="18" height="18" viewBox="0 0 23 23"><rect width="11" height="11" fill="#F25022"/><rect x="12" width="11" height="11" fill="#7FBA00"/><rect y="12" width="11" height="11" fill="#00A4EF"/><rect x="12" y="12" width="11" height="11" fill="#FFB900"/></svg>
+      Microsoft
+    </div>
+    <div class="brand-item">Meta</div>
+    <div class="brand-item" style="letter-spacing:3px;font-size:13px;">SPACEX</div>
+    <div class="brand-item">Google</div>
+  </div>
+</section>
+
+<!-- 3 FEATURE CARDS -->
+<section class="sec sec-soft" id="features">
+  <div class="sec-hdr">
+    <p class="sec-lbl">Core Features</p>
+    <h2 class="sec-ttl">Everything you need to <span class="pink">land the role</span></h2>
+  </div>
+  <div class="grid3">
+
+    <!-- Cover Letter -->
+    <div class="fcard">
+      <div class="fcard-hd">
+        <div class="fcard-tr">
+          <div class="ficon" style="background:linear-gradient(135deg,#7C5CFC,#9B7EFD);">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          </div>
+          <h3>AI Cover Letter</h3>
+        </div>
+        <span class="bdg bdg-g">99.8% match</span>
+      </div>
+      <div class="cl-prev">
+        <b>Dear Hiring Manager,</b><br><br>
+        I'm excited to apply for the Senior Product Designer role. My background in building intuitive, user-centered products aligns perfectly with your mission.<br><br>
+        At my previous company, I led a redesign that increased user retention by 42% and reduced onboarding drop-off by 60%. I thrive at the intersection of design and data, and I'd love to bring this energy to your team.<br><br>
+        Best regards, Alex
+      </div>
+    </div>
+
+    <!-- Resume -->
+    <div class="fcard">
+      <div class="fcard-hd">
+        <div class="fcard-tr">
+          <div class="ficon" style="background:linear-gradient(135deg,#2563eb,#60a5fa);">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="12" y2="17"/></svg>
+          </div>
+          <h3>Optimized Resume</h3>
+        </div>
+        <span class="bdg bdg-b">99.8% match</span>
+      </div>
+      <div class="res-wrap">
+        <div class="res-inner">
+          <div class="rname">Alex Chen</div>
+          <div class="rmeta">📍 San Francisco, CA · alex@chen.io · linkedin.com/alexchen</div>
+          <div class="rsec">Summary</div>
+          <div style="font-size:9px;color:#666;">Product Designer with 6+ years building scalable user experiences. Expert in Figma, design systems, and cross-functional collaboration.</div>
+          <div class="rsec">Experience</div>
+          <div style="font-size:10px;font-weight:700;">Senior Product Designer · Stripe <span style="float:right;font-weight:400;color:#999;">2021–Now</span></div>
+          <ul style="padding-left:12px;margin-top:4px;">
+            <li style="font-size:9px;color:#555;">Led redesign of payments dashboard serving 2M+ merchants</li>
+            <li style="font-size:9px;color:#555;">Established company-wide design system adopted by 40 engineers</li>
+          </ul>
+        </div>
+        <div class="rtabs">
+          <button class="rtab active">Harvard</button>
+          <button class="rtab">Modern</button>
+          <button class="rtab">Classic</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Auto Apply -->
+    <div class="fcard">
+      <div class="fcard-hd">
+        <div class="fcard-tr">
+          <div class="ficon" style="background:linear-gradient(135deg,#F74B8B,#FF8C42);">
+            <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          </div>
+          <h3>Auto Apply To Jobs</h3>
+        </div>
+        <span class="bdg bdg-p">587 Jobs</span>
+      </div>
+      <div class="jobs-list">
+        <div class="job-row">
+          <div class="jlogo" style="color:#0052FF;">S</div>
+          <div class="jinfo">
+            <div class="jtitle">Data Analyst · Stripe</div>
+            <div class="jco">Finance · Remote</div>
+            <div class="jtags"><span class="jtag">Analytics</span><span class="jtag">Python</span></div>
+          </div>
+          <span class="jstat applied">Applied</span>
+        </div>
+        <div class="job-row">
+          <div class="jlogo" style="color:#00A4EF;">M</div>
+          <div class="jinfo">
+            <div class="jtitle">Strategy Partner · Microsoft</div>
+            <div class="jco">Corporate · Hybrid</div>
+            <div class="jtags"><span class="jtag">Strategy</span><span class="jtag">Leadership</span></div>
+          </div>
+          <span class="jstat prog">In Progress</span>
+        </div>
+        <div class="job-row">
+          <div class="jlogo" style="color:#1DB954;">G</div>
+          <div class="jinfo">
+            <div class="jtitle">Product Manager · Google</div>
+            <div class="jco">Tech · On-site</div>
+            <div class="jtags"><span class="jtag">Product</span><span class="jtag">AI/ML</span></div>
+          </div>
+          <span class="jstat applied">Applied</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- GRADIENT SHOWCASE -->
+<section class="sec sec-white">
+  <div class="sec-hdr">
+    <p class="sec-lbl">Powered by AI</p>
+    <h2 class="sec-ttl">Smart tools that do the <span class="pink">heavy lifting</span></h2>
+  </div>
+  <div class="showcase-grid">
+
+    <!-- AI Resume Builder -->
+    <div>
+      <div class="show-txt">
+        <h2>AI Resume Builder</h2>
+        <p>Generate a tailored, ATS-optimized resume in seconds. Our AI analyzes the job description and rewrites your experience to match perfectly — every single time.</p>
+      </div>
+      <div class="gcard gc1">
+        <div class="gen-pill">
+          <div class="spark-btn"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="white" stroke="none"/></svg></div>
+          "Optimize my resume for this role"
+        </div>
+        <div class="ans-card">
+          <div class="ans-ttl">Your <span>Tailored Resume</span> is ready...</div>
+          <div style="font-size:12px;color:#333;line-height:1.75;">
+            <b>Alex Chen</b> · Senior Product Designer<br><br>
+            ✅ 6 bullet points rewritten to match JD keywords<br>
+            ✅ ATS score improved from <b>61%</b> → <b>99%</b><br>
+            ✅ Added: "Figma", "design systems", "cross-functional"<br><br>
+            <span style="color:#888;font-size:11px;">Matching 14 of 14 required keywords from job description</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Smart Job Matching -->
+    <div>
+      <div class="show-txt">
+        <h2>Smart Job Matching</h2>
+        <p>CareerSprint scans thousands of listings and surfaces only the roles where you have the highest chance of getting hired — saving you hours of searching.</p>
+      </div>
+      <div class="gcard gc2" style="position:relative;">
+        <div class="mscreen">
+          <div class="mscreen-hdr">
+            <div class="dot" style="background:#ff5f57;"></div>
+            <div class="dot" style="background:#febc2e;"></div>
+            <div class="dot" style="background:#28c840;"></div>
+            <span style="font-size:11px;color:#aaa;margin-left:8px;">Top matches for you today</span>
+          </div>
+          <div class="mscreen-body">
+            <div class="mrow">
+              <div class="mlogo" style="color:#0052FF;">S</div>
+              <div class="minfo"><div class="mrole">Senior Designer · Stripe</div><div class="mco">San Francisco · $140k–$180k</div></div>
+              <div class="mpct">98%</div>
+            </div>
+            <div class="mrow">
+              <div class="mlogo" style="color:#1a73e8;">G</div>
+              <div class="minfo"><div class="mrole">UX Lead · Google</div><div class="mco">Remote · $160k–$210k</div></div>
+              <div class="mpct">95%</div>
+            </div>
+            <div class="mrow">
+              <div class="mlogo" style="color:#1DB954;">Sp</div>
+              <div class="minfo"><div class="mrole">Product Designer · Spotify</div><div class="mco">New York · $130k–$165k</div></div>
+              <div class="mpct">93%</div>
+            </div>
+          </div>
+        </div>
+        <div class="sbubble">
+          <div class="slbl">🎯 AI Insight</div>
+          "You're a top 5% match for 12 roles this week. Apply now before they close!"
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="stats-sec">
+  <h2>You are 80% more likely to land a role faster with CareerSprint</h2>
+  <div class="stats-grid">
+    <div class="stat"><span class="stat-n">372K+</span><div class="stat-l">Roles auto-applied to</div></div>
+    <div class="stat"><span class="stat-n">80%</span><div class="stat-l">Faster job placement</div></div>
+    <div class="stat"><span class="stat-n">1.1M+</span><div class="stat-l">Happy job seekers</div></div>
+    <div class="stat"><span class="stat-n">99.8%</span><div class="stat-l">Avg. resume match rate</div></div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="sec sec-soft" id="how">
+  <div class="sec-hdr">
+    <p class="sec-lbl">Simple Process</p>
+    <h2 class="sec-ttl">Get hired in <span class="pink">4 easy steps</span></h2>
+  </div>
+  <div class="steps-grid">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-ico">📋</div>
+      <h4>Upload Your Resume</h4>
+      <p>Paste your existing resume or build one from scratch with our AI-powered builder in minutes.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-ico">🎯</div>
+      <h4>AI Finds Matches</h4>
+      <p>We scan thousands of live job listings and surface only your top-fit roles instantly.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-ico">✍️</div>
+      <h4>Tailored Applications</h4>
+      <p>Your resume and cover letter are automatically customized for every single role you apply to.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-ico">🚀</div>
+      <h4>Auto Apply & Track</h4>
+      <p>We apply on your behalf and track every application in your personal dashboard.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="sec sec-white" id="reviews">
+  <div class="sec-hdr">
+    <p class="sec-lbl">Success Stories</p>
+    <h2 class="sec-ttl">Real people, <span class="pink">real offers</span></h2>
+  </div>
+  <div class="tgrid">
+    <div class="tcard">
+      <div class="tcard-stars">★★★★★</div>
+      <p class="tcard-q">"I applied to 200+ jobs manually over 3 months with zero results. CareerSprint got me 6 recruiter callbacks in the first week. Landed my dream role at Stripe."</p>
+      <div class="tcard-auth">
+        <img src="https://i.pravatar.cc/38?img=11" alt="">
+        <div><div class="tcard-name">Sarah M.</div><div class="tcard-role">Software Engineer</div></div>
+        <span class="hired">✓ Hired at Stripe</span>
+      </div>
+    </div>
+    <div class="tcard">
+      <div class="tcard-stars">★★★★★</div>
+      <p class="tcard-q">"The AI resume tailoring is unreal. My resume went from 58% ATS score to 99% for the Google role. Got the call 2 days later. Absolutely incredible."</p>
+      <div class="tcard-auth">
+        <img src="https://i.pravatar.cc/38?img=32" alt="">
+        <div><div class="tcard-name">James K.</div><div class="tcard-role">Product Manager</div></div>
+        <span class="hired">✓ Hired at Google</span>
+      </div>
+    </div>
+    <div class="tcard">
+      <div class="tcard-stars">★★★★★</div>
+      <p class="tcard-q">"As a career changer, I had no idea how to position myself. CareerSprint rewrote my whole story and got me into a role I thought was completely out of reach."</p>
+      <div class="tcard-auth">
+        <img src="https://i.pravatar.cc/38?img=44" alt="">
+        <div><div class="tcard-name">Priya L.</div><div class="tcard-role">UX Designer</div></div>
+        <span class="hired">✓ Hired at Spotify</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-sec">
+  <h2>Ready to sprint to your next offer?</h2>
+  <p>Join over 1 million job seekers who found their role faster with CareerSprint.</p>
+  <button class="btn-wht">Get Started — It's Free →</button>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div class="fbrand">
+      <a href="#" class="logo" style="color:#fff;">Career<span class="sp">Sprint</span><span class="logo-dot"></span></a>
+      <p>AI-powered job application platform helping you land your dream role faster.</p>
+    </div>
+    <div class="fcol">
+      <h4>AI Tools</h4>
+      <a href="#">Auto Apply</a>
+      <a href="#">AI Resume Builder</a>
+      <a href="#">AI Cover Letter</a>
+      <a href="#">Job Matcher</a>
+      <a href="#">Resume Scanner</a>
+    </div>
+    <div class="fcol">
+      <h4>Company</h4>
+      <a href="#">About</a>
+      <a href="#">Blog</a>
+      <a href="#">Careers</a>
+      <a href="#">Contact</a>
+    </div>
+    <div class="fcol">
+      <h4>Legal</h4>
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Service</a>
+      <a href="#">Cookie Policy</a>
+    </div>
+  </div>
+  <div class="fbot">
+    <span>© 2026 CareerSprint. All rights reserved.</span>
+    <div class="fbot-links">
+      <a href="#">Privacy</a>
+      <a href="#">Terms</a>
+      <a href="#">Cookies</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Resume template tabs
+  document.querySelectorAll('.rtab').forEach(tab => {
+    tab.addEventListener('click', function() {
+      this.closest('.rtabs').querySelectorAll('.rtab').forEach(t => t.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
+
+  // Smooth scroll
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', function(e) {
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+    });
+  });
+
+  // Animate stats on scroll
+  const statNums = document.querySelectorAll('.stat-n');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.3 });
+  statNums.forEach(el => {
+    el.style.opacity = '0'; el.style.transform = 'translateY(20px)';
+    el.style.transition = 'opacity .6s ease, transform .6s ease';
+    obs.observe(el);
+  });
+
+  // Fade-in cards
+  const fadeEls = document.querySelectorAll('.fcard, .tcard, .step, .showcase-grid > div');
+  const cardObs = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const idx = Array.from(fadeEls).indexOf(entry.target);
+        setTimeout(() => {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }, (idx % 3) * 100);
+        cardObs.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  fadeEls.forEach(el => {
+    el.style.opacity = '0'; el.style.transform = 'translateY(28px)';
+    el.style.transition = 'opacity .55s ease, transform .55s ease';
+    cardObs.observe(el);
+  });
+</script>
+</body>
+</html>
