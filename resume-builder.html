@@ -342,18 +342,15 @@ KEYWORDS MATCHED: [list 5-8 keywords from job description that are in the resume
 ATS SCORE: [number between 85-99]`;
 
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    const response = await fetch('/api/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 2000,
-        messages: [{ role: 'user', content: prompt }]
-      })
+      body: JSON.stringify({ prompt, type: 'resume' })
     });
 
     const data = await response.json();
-    const text = data.content[0].text;
+    if(data.error) throw new Error(data.error);
+    const text = data.result;
     lastResumeText = text;
 
     stopLoadingMessages();
