@@ -131,7 +131,7 @@ input:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(124,92,252,.1)}
 </div>
 
 <script>
-const supabase = window.supabase.createClient(
+const sbClient = window.supabase.createClient(
   'https://jxtcprqmmiwiljsjpoiw.supabase.co',
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp4dGNwcnFtbWl3aWxqc2pwb2l3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY2MjY3MzgsImV4cCI6MjA5MjIwMjczOH0.hVXVNagzHq8Q2eYbM9nw3tsjfZEwVu99i_BB6uryLtk'
 );
@@ -147,13 +147,13 @@ async function handleSignup(){
   if(!name||!email||!password)return showError('Please fill in all fields.');
   if(password.length<8)return showError('Password must be at least 8 characters.');
   btn.disabled=true;btn.textContent='Creating account...';
-  const{data,error}=await supabase.auth.signUp({email,password,options:{data:{full_name:name}}});
+  const{data,error}=await sbClient.auth.signUp({email,password,options:{data:{full_name:name}}});
   if(error){showError(error.message);btn.disabled=false;btn.textContent='Create Account →';}
   else{showSuccess('Account created! Check your email to confirm, then log in.');btn.textContent='✓ Check your email!';}
 }
 
 async function handleGoogle(){
-  await supabase.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.origin+'/dashboard.html'}});
+  await sbClient.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.origin+'/dashboard.html'}});
 }
 </script>
 </body>
