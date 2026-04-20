@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Resume Builder – CareerSprint</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--purple:#7C5CFC;--pink:#F74B8B;--orange:#FF8C42;--text:#0f0f1a;--muted:#6b7280;--border:#e5e7eb;--soft:#f8f8fc}
+body{font-family:'Plus Jakarta Sans',sans-serif;color:var(--text);background:var(--soft);min-height:100vh}
+
+nav{background:#fff;border-bottom:1px solid var(--border);padding:0 40px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.logo{font-family:'Manrope',sans-serif;font-weight:900;font-size:20px;color:var(--purple);text-decoration:none}
+.logo span{color:var(--pink)}
+.nav-right{display:flex;align-items:center;gap:12px}
+.btn-back{background:none;border:1.5px solid var(--border);border-radius:50px;padding:7px 16px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;color:var(--muted);text-decoration:none;transition:all .15s}
+.btn-back:hover{border-color:var(--purple);color:var(--purple)}
+.btn-dash{background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff;border:none;border-radius:50px;padding:8px 18px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;text-decoration:none}
+
+/* LAYOUT */
+.container{max-width:1200px;margin:0 auto;padding:40px 24px}
+.page-header{margin-bottom:32px}
+.page-header h1{font-family:'Manrope',sans-serif;font-size:28px;font-weight:900;margin-bottom:6px}
+.page-header p{font-size:15px;color:var(--muted)}
+
+.builder-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+
+/* INPUT PANEL */
+.panel{background:#fff;border-radius:20px;padding:28px;border:1px solid rgba(0,0,0,.06);box-shadow:0 2px 16px rgba(0,0,0,.04)}
+.panel-title{font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:20px;display:flex;align-items:center;gap:8px}
+.panel-title span{font-size:16px}
+
+.form-group{margin-bottom:18px}
+label{display:block;font-size:13px;font-weight:700;color:#374151;margin-bottom:6px}
+input,textarea,select{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;font-family:inherit;outline:none;transition:border-color .15s;color:var(--text);background:#fff;resize:vertical}
+input:focus,textarea:focus,select:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(124,92,252,.08)}
+textarea{min-height:120px;line-height:1.6}
+
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+.generate-btn{width:100%;padding:14px;background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:10px;transition:all .2s;box-shadow:0 4px 20px rgba(124,92,252,.35);margin-top:8px}
+.generate-btn:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(124,92,252,.5)}
+.generate-btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+
+/* OUTPUT PANEL */
+.output-panel{display:flex;flex-direction:column;gap:20px}
+
+.resume-preview{background:#fff;border-radius:20px;padding:28px;border:1px solid rgba(0,0,0,.06);box-shadow:0 2px 16px rgba(0,0,0,.04);min-height:400px;position:relative}
+.resume-preview.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:var(--muted)}
+.empty-icon{font-size:48px;margin-bottom:16px;opacity:.4}
+.empty-text{font-size:15px;font-weight:600;margin-bottom:6px}
+.empty-sub{font-size:13px;opacity:.7}
+
+/* RESUME CONTENT */
+.resume-content{display:none}
+.resume-content.visible{display:block}
+.resume-name{font-family:'Manrope',sans-serif;font-size:24px;font-weight:900;color:#0f0f1a;margin-bottom:4px}
+.resume-contact{font-size:12px;color:var(--muted);margin-bottom:16px;display:flex;gap:12px;flex-wrap:wrap}
+.resume-section{margin-bottom:18px}
+.resume-section-title{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--purple);border-bottom:2px solid var(--purple);padding-bottom:4px;margin-bottom:10px}
+.resume-text{font-size:13px;line-height:1.7;color:#374151;white-space:pre-wrap}
+.resume-job{margin-bottom:12px}
+.resume-job-title{font-size:13px;font-weight:800;color:#0f0f1a}
+.resume-job-meta{font-size:11px;color:var(--muted);margin-bottom:4px}
+
+/* ACTION BUTTONS */
+.action-row{display:flex;gap:10px}
+.action-btn{flex:1;padding:11px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px}
+.action-btn-outline{background:#fff;border:1.5px solid var(--border);color:var(--text)}
+.action-btn-outline:hover{border-color:var(--purple);color:var(--purple)}
+.action-btn-solid{background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff;border:none;box-shadow:0 4px 16px rgba(124,92,252,.3)}
+.action-btn-solid:hover{transform:translateY(-1px)}
+
+/* SCORE CARD */
+.score-card{background:#fff;border-radius:16px;padding:20px;border:1px solid rgba(0,0,0,.06);display:none}
+.score-card.visible{display:block}
+.score-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.score-title{font-size:13px;font-weight:800;color:var(--text)}
+.score-num{font-family:'Manrope',sans-serif;font-size:28px;font-weight:900;color:var(--purple)}
+.score-bar{background:#f3f4f6;border-radius:50px;height:8px;margin-bottom:16px}
+.score-fill{background:linear-gradient(90deg,var(--purple),var(--pink));border-radius:50px;height:8px;transition:width 1s ease}
+.score-tags{display:flex;gap:6px;flex-wrap:wrap}
+.score-tag{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:700}
+.tag-green{background:#ecfdf5;color:#059669}
+.tag-orange{background:#fff7ed;color:#d97706}
+
+/* LOADING */
+.loading-overlay{position:absolute;inset:0;background:rgba(255,255,255,.9);display:none;flex-direction:column;align-items:center;justify-content:center;border-radius:20px;z-index:10}
+.loading-overlay.active{display:flex}
+.spinner{width:40px;height:40px;border:3px solid #ede9fe;border-top:3px solid var(--purple);border-radius:50%;animation:spin 1s linear infinite;margin-bottom:16px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{font-size:14px;font-weight:600;color:var(--purple);animation:pulse-text 1.5s ease-in-out infinite}
+@keyframes pulse-text{0%,100%{opacity:1}50%{opacity:.5}}
+.loading-steps{font-size:12px;color:var(--muted);margin-top:6px}
+
+@media(max-width:900px){.builder-grid{grid-template-columns:1fr}.form-row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo">Career<span>Sprint</span>•</a>
+  <div class="nav-right">
+    <a href="dashboard.html" class="btn-back">← Dashboard</a>
+    <a href="pricing.html" class="btn-dash">Upgrade to Pro</a>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="page-header">
+    <h1>🤖 AI Resume Builder</h1>
+    <p>Paste a job description and your experience — AI tailors your resume to match perfectly.</p>
+  </div>
+
+  <div class="builder-grid">
+
+    <!-- INPUT PANEL -->
+    <div class="panel">
+      <div class="panel-title"><span>📋</span> Your Information</div>
+
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" id="fullName" placeholder="Alex Chen" />
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="email" placeholder="alex@example.com" />
+        </div>
+        <div class="form-group">
+          <label>Phone</label>
+          <input type="text" id="phone" placeholder="+1 234 567 8900" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Location</label>
+          <input type="text" id="location" placeholder="San Francisco, CA" />
+        </div>
+        <div class="form-group">
+          <label>LinkedIn (optional)</label>
+          <input type="text" id="linkedin" placeholder="linkedin.com/in/alex" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Your Current/Previous Job Title</label>
+        <input type="text" id="jobTitle" placeholder="e.g. Senior Product Designer" />
+      </div>
+
+      <div class="form-group">
+        <label>Work Experience</label>
+        <textarea id="experience" placeholder="Describe your work experience, achievements, and responsibilities. Include job titles, companies, and dates.&#10;&#10;Example:&#10;Senior Designer at Stripe (2021-Now)&#10;- Led redesign of payments dashboard&#10;- Built company-wide design system"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Education</label>
+        <input type="text" id="education" placeholder="e.g. BSc Computer Science, MIT, 2018" />
+      </div>
+
+      <div class="form-group">
+        <label>Skills</label>
+        <input type="text" id="skills" placeholder="e.g. Figma, React, Python, Leadership, Project Management" />
+      </div>
+
+      <div class="form-group">
+        <label>🎯 Job Description (paste the job you're applying for)</label>
+        <textarea id="jobDesc" style="min-height:140px;" placeholder="Paste the full job description here. The AI will tailor your resume to match the exact keywords and requirements..."></textarea>
+      </div>
+
+      <button class="generate-btn" id="generateBtn" onclick="generateResume()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        Generate AI Resume
+      </button>
+    </div>
+
+    <!-- OUTPUT PANEL -->
+    <div class="output-panel">
+
+      <!-- SCORE CARD -->
+      <div class="score-card" id="scoreCard">
+        <div class="score-header">
+          <div class="score-title">ATS Match Score</div>
+          <div class="score-num" id="scoreNum">0%</div>
+        </div>
+        <div class="score-bar"><div class="score-fill" id="scoreFill" style="width:0%"></div></div>
+        <div class="score-tags" id="scoreTags"></div>
+      </div>
+
+      <!-- RESUME PREVIEW -->
+      <div class="resume-preview" id="resumePreview">
+        <div class="loading-overlay" id="loadingOverlay">
+          <div class="spinner"></div>
+          <div class="loading-text">AI is crafting your resume...</div>
+          <div class="loading-steps" id="loadingStep">Analyzing job description</div>
+        </div>
+
+        <!-- EMPTY STATE -->
+        <div id="emptyState">
+          <div class="empty-icon">📄</div>
+          <div class="empty-text">Your AI resume will appear here</div>
+          <div class="empty-sub">Fill in your details and paste the job description, then click Generate</div>
+        </div>
+
+        <!-- RESUME OUTPUT -->
+        <div class="resume-content" id="resumeOutput">
+          <div class="resume-name" id="outName"></div>
+          <div class="resume-contact" id="outContact"></div>
+          <div id="outBody"></div>
+        </div>
+      </div>
+
+      <!-- ACTION BUTTONS -->
+      <div class="action-row" id="actionRow" style="display:none">
+        <button class="action-btn action-btn-outline" onclick="copyResume()">📋 Copy Text</button>
+        <button class="action-btn action-btn-outline" onclick="regenerate()">🔄 Regenerate</button>
+        <button class="action-btn action-btn-solid" onclick="window.location.href='cover-letter.html'">✍️ Generate Cover Letter →</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+const supabase = window.supabase.createClient(
+  'https://jxtcprqmmiwiljsjpoiw.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp4dGNwcnFtbWl3aWxqc2pwb2l3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY2MjY3MzgsImV4cCI6MjA5MjIwMjczOH0.hVXVNagzHq8Q2eYbM9nw3tsjfZEwVu99i_BB6uryLtk'
+);
+
+// Check auth
+supabase.auth.getSession().then(({data:{session}})=>{
+  if(!session) window.location.href='login.html';
+  else {
+    const name = session.user.user_metadata?.full_name || '';
+    if(name) document.getElementById('fullName').value = name;
+    document.getElementById('email').value = session.user.email || '';
+  }
+});
+
+const loadingMessages = [
+  'Analyzing job description...',
+  'Identifying key requirements...',
+  'Tailoring your experience...',
+  'Optimizing for ATS systems...',
+  'Adding power keywords...',
+  'Finalizing your resume...'
+];
+
+let msgIndex = 0;
+let msgInterval;
+let lastResumeText = '';
+
+function startLoadingMessages(){
+  msgIndex = 0;
+  document.getElementById('loadingStep').textContent = loadingMessages[0];
+  msgInterval = setInterval(()=>{
+    msgIndex = (msgIndex+1) % loadingMessages.length;
+    document.getElementById('loadingStep').textContent = loadingMessages[msgIndex];
+  }, 1800);
+}
+
+function stopLoadingMessages(){ clearInterval(msgInterval); }
+
+async function generateResume(){
+  const name = document.getElementById('fullName').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const phone = document.getElementById('phone').value.trim();
+  const location = document.getElementById('location').value.trim();
+  const linkedin = document.getElementById('linkedin').value.trim();
+  const jobTitle = document.getElementById('jobTitle').value.trim();
+  const experience = document.getElementById('experience').value.trim();
+  const education = document.getElementById('education').value.trim();
+  const skills = document.getElementById('skills').value.trim();
+  const jobDesc = document.getElementById('jobDesc').value.trim();
+
+  if(!name || !experience || !jobDesc){
+    alert('Please fill in at least your name, experience, and the job description.');
+    return;
+  }
+
+  const btn = document.getElementById('generateBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<div style="width:18px;height:18px;border:2px solid rgba(255,255,255,.4);border-top:2px solid #fff;border-radius:50%;animation:spin 1s linear infinite"></div> Generating...';
+
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('resumeOutput').classList.remove('visible');
+  document.getElementById('loadingOverlay').classList.add('active');
+  document.getElementById('actionRow').style.display = 'none';
+  startLoadingMessages();
+
+  const prompt = `You are an expert resume writer and ATS optimization specialist. Create a professional, ATS-optimized resume based on the following information.
+
+CANDIDATE INFORMATION:
+Name: ${name}
+Email: ${email}
+Phone: ${phone}
+Location: ${location}
+LinkedIn: ${linkedin}
+Current/Previous Title: ${jobTitle}
+
+WORK EXPERIENCE:
+${experience}
+
+EDUCATION:
+${education}
+
+SKILLS:
+${skills}
+
+JOB DESCRIPTION THEY ARE APPLYING FOR:
+${jobDesc}
+
+INSTRUCTIONS:
+1. Analyze the job description and extract key requirements, skills, and keywords
+2. Tailor the resume to match those keywords naturally
+3. Rewrite bullet points to highlight achievements with metrics where possible
+4. Use strong action verbs
+5. Ensure ATS compatibility
+
+Return the resume in this EXACT format (use these exact section headers):
+
+SUMMARY
+[2-3 sentence professional summary tailored to the role]
+
+EXPERIENCE
+[Job Title] | [Company] | [Dates]
+• [Achievement bullet 1]
+• [Achievement bullet 2]
+• [Achievement bullet 3]
+
+EDUCATION
+[Degree] | [School] | [Year]
+
+SKILLS
+[Comma-separated list of relevant skills]
+
+KEYWORDS MATCHED: [list 5-8 keywords from job description that are in the resume]
+ATS SCORE: [number between 85-99]`;
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 2000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    const data = await response.json();
+    const text = data.content[0].text;
+    lastResumeText = text;
+
+    stopLoadingMessages();
+    document.getElementById('loadingOverlay').classList.remove('active');
+
+    // Parse and display
+    displayResume(name, email, phone, location, linkedin, text);
+
+    // Show score
+    const scoreMatch = text.match(/ATS SCORE:\s*(\d+)/i);
+    const score = scoreMatch ? parseInt(scoreMatch[1]) : 92;
+    showScore(score, text);
+
+    document.getElementById('actionRow').style.display = 'flex';
+
+  } catch(err) {
+    stopLoadingMessages();
+    document.getElementById('loadingOverlay').classList.remove('active');
+    document.getElementById('emptyState').style.display = 'flex';
+    alert('Something went wrong. Please try again.');
+    console.error(err);
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg> Generate AI Resume';
+}
+
+function displayResume(name, email, phone, location, linkedin, text){
+  document.getElementById('outName').textContent = name;
+
+  let contactParts = [];
+  if(email) contactParts.push('📧 '+email);
+  if(phone) contactParts.push('📱 '+phone);
+  if(location) contactParts.push('📍 '+location);
+  if(linkedin) contactParts.push('🔗 '+linkedin);
+  document.getElementById('outContact').innerHTML = contactParts.join(' &nbsp;|&nbsp; ');
+
+  // Parse sections
+  const body = document.getElementById('outBody');
+  body.innerHTML = '';
+
+  const sections = ['SUMMARY','EXPERIENCE','EDUCATION','SKILLS'];
+  sections.forEach(sec => {
+    const regex = new RegExp(sec+'\\n([\\s\\S]*?)(?=\\n[A-Z]+\\n|KEYWORDS MATCHED|ATS SCORE|$)','i');
+    const match = text.match(regex);
+    if(match){
+      const div = document.createElement('div');
+      div.className = 'resume-section';
+      div.innerHTML = `<div class="resume-section-title">${sec}</div><div class="resume-text">${match[1].trim()}</div>`;
+      body.appendChild(div);
+    }
+  });
+
+  document.getElementById('resumeOutput').classList.add('visible');
+}
+
+function showScore(score, text){
+  document.getElementById('scoreNum').textContent = score+'%';
+  document.getElementById('scoreFill').style.width = score+'%';
+
+  const kwMatch = text.match(/KEYWORDS MATCHED:\s*(.+)/i);
+  const tags = document.getElementById('scoreTags');
+  tags.innerHTML = '';
+  if(kwMatch){
+    const keywords = kwMatch[1].split(',').map(k=>k.trim()).filter(Boolean);
+    keywords.slice(0,6).forEach(kw=>{
+      const tag = document.createElement('span');
+      tag.className = 'score-tag tag-green';
+      tag.textContent = '✓ '+kw;
+      tags.appendChild(tag);
+    });
+  }
+  document.getElementById('scoreCard').classList.add('visible');
+}
+
+function copyResume(){
+  const content = document.getElementById('outBody').innerText;
+  const name = document.getElementById('outName').innerText;
+  const contact = document.getElementById('outContact').innerText;
+  navigator.clipboard.writeText(name+'\n'+contact+'\n\n'+content);
+  alert('Resume copied to clipboard!');
+}
+
+function regenerate(){ generateResume(); }
+</script>
+</body>
+</html>

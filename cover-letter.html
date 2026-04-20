@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Cover Letter – CareerSprint</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--purple:#7C5CFC;--pink:#F74B8B;--orange:#FF8C42;--text:#0f0f1a;--muted:#6b7280;--border:#e5e7eb;--soft:#f8f8fc}
+body{font-family:'Plus Jakarta Sans',sans-serif;color:var(--text);background:var(--soft);min-height:100vh}
+nav{background:#fff;border-bottom:1px solid var(--border);padding:0 40px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.logo{font-family:'Manrope',sans-serif;font-weight:900;font-size:20px;color:var(--purple);text-decoration:none}
+.logo span{color:var(--pink)}
+.nav-right{display:flex;align-items:center;gap:12px}
+.btn-back{background:none;border:1.5px solid var(--border);border-radius:50px;padding:7px 16px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;color:var(--muted);text-decoration:none;transition:all .15s}
+.btn-back:hover{border-color:var(--purple);color:var(--purple)}
+.container{max-width:1200px;margin:0 auto;padding:40px 24px}
+.page-header{margin-bottom:32px}
+.page-header h1{font-family:'Manrope',sans-serif;font-size:28px;font-weight:900;margin-bottom:6px}
+.page-header p{font-size:15px;color:var(--muted)}
+.builder-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.panel{background:#fff;border-radius:20px;padding:28px;border:1px solid rgba(0,0,0,.06);box-shadow:0 2px 16px rgba(0,0,0,.04)}
+.panel-title{font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:20px;display:flex;align-items:center;gap:8px}
+.form-group{margin-bottom:18px}
+label{display:block;font-size:13px;font-weight:700;color:#374151;margin-bottom:6px}
+input,textarea,select{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;font-family:inherit;outline:none;transition:border-color .15s;color:var(--text);background:#fff;resize:vertical}
+input:focus,textarea:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(124,92,252,.08)}
+textarea{min-height:120px;line-height:1.6}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tone-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.tone-btn{padding:10px;border-radius:10px;border:2px solid var(--border);background:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s;text-align:center}
+.tone-btn.active{border-color:var(--purple);background:#ede9fe;color:var(--purple)}
+.generate-btn{width:100%;padding:14px;background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:10px;transition:all .2s;box-shadow:0 4px 20px rgba(124,92,252,.35);margin-top:8px}
+.generate-btn:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(124,92,252,.5)}
+.generate-btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.output-panel{display:flex;flex-direction:column;gap:16px}
+.letter-preview{background:#fff;border-radius:20px;padding:32px;border:1px solid rgba(0,0,0,.06);box-shadow:0 2px 16px rgba(0,0,0,.04);min-height:400px;position:relative;font-size:14px;line-height:1.8;color:#374151}
+.letter-preview.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:var(--muted)}
+.empty-icon{font-size:48px;margin-bottom:16px;opacity:.4}
+.empty-text{font-size:15px;font-weight:600;margin-bottom:6px}
+.empty-sub{font-size:13px;opacity:.7}
+.letter-content{display:none;white-space:pre-wrap}
+.letter-content.visible{display:block}
+.loading-overlay{position:absolute;inset:0;background:rgba(255,255,255,.92);display:none;flex-direction:column;align-items:center;justify-content:center;border-radius:20px;z-index:10}
+.loading-overlay.active{display:flex}
+.spinner{width:40px;height:40px;border:3px solid #ede9fe;border-top:3px solid var(--purple);border-radius:50%;animation:spin 1s linear infinite;margin-bottom:16px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{font-size:14px;font-weight:600;color:var(--purple)}
+.action-row{display:flex;gap:10px}
+.action-btn{flex:1;padding:11px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px}
+.action-btn-outline{background:#fff;border:1.5px solid var(--border);color:var(--text)}
+.action-btn-outline:hover{border-color:var(--purple);color:var(--purple)}
+.action-btn-solid{background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff;border:none}
+.word-count{font-size:12px;color:var(--muted);text-align:right;margin-top:8px}
+@media(max-width:900px){.builder-grid{grid-template-columns:1fr}.form-row,.tone-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="logo">Career<span>Sprint</span>•</a>
+  <div class="nav-right">
+    <a href="dashboard.html" class="btn-back">← Dashboard</a>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="page-header">
+    <h1>✍️ AI Cover Letter Generator</h1>
+    <p>Generate a personalized, compelling cover letter for any job in seconds.</p>
+  </div>
+
+  <div class="builder-grid">
+    <!-- INPUT -->
+    <div class="panel">
+      <div class="panel-title"><span>📋</span> Your Details</div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Your Name</label>
+          <input type="text" id="name" placeholder="Alex Chen" />
+        </div>
+        <div class="form-group">
+          <label>Your Job Title</label>
+          <input type="text" id="title" placeholder="Senior Designer" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Company You're Applying To</label>
+        <input type="text" id="company" placeholder="e.g. Google" />
+      </div>
+
+      <div class="form-group">
+        <label>Role You're Applying For</label>
+        <input type="text" id="role" placeholder="e.g. Senior Product Designer" />
+      </div>
+
+      <div class="form-group">
+        <label>Your Key Achievements (2-3 bullet points)</label>
+        <textarea id="achievements" placeholder="• Led redesign that increased retention by 42%&#10;• Built design system used by 40+ engineers&#10;• Managed team of 5 designers across 3 products"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Why This Company? (optional)</label>
+        <input type="text" id="whyCompany" placeholder="e.g. I love their mission to democratize payments" />
+      </div>
+
+      <div class="form-group">
+        <label>Job Description</label>
+        <textarea id="jobDesc" style="min-height:100px" placeholder="Paste the job description here..."></textarea>
+      </div>
+
+
+
+      <button class="generate-btn" id="generateBtn" onclick="generateLetter()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        Generate Cover Letter
+      </button>
+    </div>
+
+    <!-- OUTPUT -->
+    <div class="output-panel">
+      <div class="letter-preview" id="letterPreview">
+        <div class="loading-overlay" id="loadingOverlay">
+          <div class="spinner"></div>
+          <div class="loading-text">Writing your cover letter...</div>
+        </div>
+        <div class="empty-icon">✉️</div>
+        <div class="empty-text">Your cover letter will appear here</div>
+        <div class="empty-sub">Fill in your details and click Generate</div>
+        <div class="letter-content" id="letterOutput"></div>
+      </div>
+      <div class="word-count" id="wordCount"></div>
+      <div class="action-row" id="actionRow" style="display:none">
+        <button class="action-btn action-btn-outline" onclick="copyLetter()">📋 Copy</button>
+        <button class="action-btn action-btn-outline" onclick="generateLetter()">🔄 Regenerate</button>
+        <button class="action-btn action-btn-solid" onclick="downloadLetter()">⬇️ Download</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const supabase = window.supabase.createClient(
+  'https://jxtcprqmmiwiljsjpoiw.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp4dGNwcnFtbWl3aWxqc2pwb2l3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY2MjY3MzgsImV4cCI6MjA5MjIwMjczOH0.hVXVNagzHq8Q2eYbM9nw3tsjfZEwVu99i_BB6uryLtk'
+);
+
+supabase.auth.getSession().then(({data:{session}})=>{
+  if(!session) window.location.href='login.html';
+  else {
+    const name = session.user.user_metadata?.full_name || '';
+    if(name) document.getElementById('name').value = name;
+  }
+});
+
+let selectedTone = 'professional';
+
+function setTone(tone){
+  document.querySelectorAll('.tone-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tone-'+tone).classList.add('active');
+  selectedTone = tone;
+}
+
+async function generateLetter(){
+  const name = document.getElementById('name').value.trim();
+  const title = document.getElementById('title').value.trim();
+  const company = document.getElementById('company').value.trim();
+  const role = document.getElementById('role').value.trim();
+  const achievements = document.getElementById('achievements').value.trim();
+  const whyCompany = document.getElementById('whyCompany').value.trim();
+  const jobDesc = document.getElementById('jobDesc').value.trim();
+
+  if(!name || !company || !role || !achievements){
+    alert('Please fill in your name, company, role, and achievements.');
+    return;
+  }
+
+  const btn = document.getElementById('generateBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<div style="width:18px;height:18px;border:2px solid rgba(255,255,255,.4);border-top:2px solid #fff;border-radius:50%;animation:spin 1s linear infinite"></div> Generating...';
+
+  const preview = document.getElementById('letterPreview');
+  preview.querySelector('.empty-icon') && (preview.querySelector('.empty-icon').style.display='none');
+  preview.querySelector('.empty-text') && (preview.querySelector('.empty-text').style.display='none');
+  preview.querySelector('.empty-sub') && (preview.querySelector('.empty-sub').style.display='none');
+  document.getElementById('letterOutput').classList.remove('visible');
+  document.getElementById('loadingOverlay').classList.add('active');
+  document.getElementById('actionRow').style.display='none';
+
+  const prompt = `Write a compelling, personalized cover letter with a ${selectedTone} tone.
+
+APPLICANT: ${name} (${title})
+APPLYING TO: ${role} at ${company}
+KEY ACHIEVEMENTS: ${achievements}
+WHY THIS COMPANY: ${whyCompany || 'Not specified'}
+JOB DESCRIPTION: ${jobDesc || 'Not provided'}
+
+Requirements:
+- Start with a strong, attention-grabbing opening (NOT "I am writing to apply")
+- 3-4 paragraphs, around 300-350 words
+- Reference specific achievements with metrics
+- Show genuine enthusiasm for the company
+- End with a confident call to action
+- Use ${selectedTone} tone throughout
+- Make it feel human and authentic, not generic
+
+Write ONLY the cover letter text, starting from "Dear Hiring Manager," — no extra commentary.`;
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages:[{role:'user',content:prompt}]
+      })
+    });
+
+    const data = await response.json();
+    const letter = data.content[0].text;
+
+    document.getElementById('loadingOverlay').classList.remove('active');
+    const output = document.getElementById('letterOutput');
+    output.textContent = letter;
+    output.classList.add('visible');
+
+    const words = letter.split(/\s+/).length;
+    document.getElementById('wordCount').textContent = words + ' words';
+    document.getElementById('actionRow').style.display = 'flex';
+
+  } catch(err){
+    document.getElementById('loadingOverlay').classList.remove('active');
+    alert('Something went wrong. Please try again.');
+    console.error(err);
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg> Generate Cover Letter';
+}
+
+function copyLetter(){
+  navigator.clipboard.writeText(document.getElementById('letterOutput').textContent);
+  alert('Cover letter copied to clipboard!');
+}
+
+function downloadLetter(){
+  const text = document.getElementById('letterOutput').textContent;
+  const blob = new Blob([text],{type:'text/plain'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'cover-letter.txt';
+  a.click();
+}
+</script>
+</body>
+</html>

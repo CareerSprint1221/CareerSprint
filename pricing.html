@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pricing – CareerSprint</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://js.stripe.com/v3/"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--purple:#7C5CFC;--pink:#F74B8B;--orange:#FF8C42;--text:#0f0f1a;--muted:#6b7280;--border:#e5e7eb;--soft:#f8f8fc}
+body{font-family:'Plus Jakarta Sans',sans-serif;color:var(--text);background:#fff}
+
+nav{position:sticky;top:0;z-index:200;background:rgba(255,255,255,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 48px;height:66px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:'Manrope',sans-serif;font-weight:900;font-size:22px;color:var(--purple);text-decoration:none;display:flex;align-items:center}
+.logo span{color:var(--pink)}
+.logo-dot{width:7px;height:7px;background:var(--pink);border-radius:50%;margin-left:2px;margin-bottom:10px}
+.nav-right{display:flex;align-items:center;gap:12px}
+.btn-ghost{background:none;border:1.5px solid var(--border);border-radius:50px;padding:9px 20px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;color:var(--text);text-decoration:none;transition:border-color .15s}
+.btn-ghost:hover{border-color:var(--purple);color:var(--purple)}
+.btn-nav-primary{background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff;border:none;border-radius:50px;padding:10px 24px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;text-decoration:none}
+
+/* HERO */
+.hero{text-align:center;padding:80px 48px 60px;background:linear-gradient(155deg,#ede8ff 0%,#fce4f0 50%,#ffe8d6 100%)}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.8);border:1px solid rgba(124,92,252,.25);border-radius:50px;padding:6px 16px;font-size:12px;font-weight:700;color:var(--purple);margin-bottom:20px}
+.hero h1{font-family:'Manrope',sans-serif;font-size:clamp(32px,5vw,54px);font-weight:900;letter-spacing:-1.5px;margin-bottom:16px}
+.hero h1 span{background:linear-gradient(90deg,var(--purple),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{font-size:17px;color:var(--muted);max-width:460px;margin:0 auto 36px;line-height:1.7}
+
+/* TOGGLE */
+.toggle-wrap{display:inline-flex;align-items:center;gap:14px;background:rgba(255,255,255,.7);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.5);border-radius:50px;padding:8px 20px}
+.toggle-label{font-size:14px;font-weight:600;color:var(--muted);transition:color .15s}
+.toggle-label.active{color:var(--text)}
+.toggle{width:48px;height:26px;background:#e5e7eb;border-radius:50px;cursor:pointer;position:relative;transition:background .2s;border:none;flex-shrink:0}
+.toggle.on{background:var(--purple)}
+.toggle-thumb{width:20px;height:20px;background:#fff;border-radius:50%;position:absolute;top:3px;left:3px;transition:left .2s;box-shadow:0 2px 4px rgba(0,0,0,.15)}
+.toggle.on .toggle-thumb{left:25px}
+.save-tag{background:linear-gradient(90deg,var(--purple),var(--pink));color:#fff;font-size:10px;font-weight:800;padding:2px 8px;border-radius:20px}
+
+/* PLANS */
+.plans-wrap{padding:64px 48px 88px;background:#fff}
+.plans-inner{max-width:860px;margin:0 auto}
+.plans-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+
+.plan-card{border-radius:28px;padding:36px;border:2px solid var(--border);position:relative;transition:transform .2s,box-shadow .2s}
+.plan-card:hover{transform:translateY(-6px);box-shadow:0 20px 60px rgba(0,0,0,.08)}
+.plan-card.pro{border-color:var(--purple);background:linear-gradient(160deg,#faf8ff 0%,#fff 100%);box-shadow:0 8px 48px rgba(124,92,252,.15)}
+
+.plan-tag{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:12px}
+.plan-card.pro .plan-tag{color:var(--purple)}
+.pro-badge{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff;font-size:11px;font-weight:800;padding:4px 14px;border-radius:20px;margin-bottom:16px}
+
+.plan-price{font-family:'Manrope',sans-serif;font-size:56px;font-weight:900;letter-spacing:-2px;line-height:1;margin-bottom:6px}
+.plan-price sup{font-size:26px;vertical-align:top;margin-top:12px;display:inline-block}
+.plan-price .per{font-size:18px;font-weight:600;color:var(--muted);letter-spacing:0}
+.yearly-price{font-size:13px;color:var(--muted);margin-bottom:6px;min-height:20px}
+.plan-desc{font-size:14px;color:var(--muted);margin-bottom:28px;line-height:1.65}
+
+.plan-btn{width:100%;padding:14px;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s;margin-bottom:32px;border:none}
+.plan-btn-free{background:var(--soft);color:var(--text);border:2px solid var(--border)}
+.plan-btn-free:hover{border-color:var(--purple);color:var(--purple)}
+.plan-btn-pro{background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff;box-shadow:0 6px 24px rgba(124,92,252,.4)}
+.plan-btn-pro:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(124,92,252,.5)}
+
+.divider{border:none;border-top:1px solid var(--border);margin:0 0 24px}
+.features-title{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:16px}
+.features-list{display:flex;flex-direction:column;gap:12px}
+.feat{display:flex;align-items:flex-start;gap:10px;font-size:14px}
+.feat-icon{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;font-weight:800;margin-top:1px}
+.feat-yes{background:#ecfdf5;color:#059669}
+.feat-no{background:#f3f4f6;color:#d1d5db}
+.feat-text{color:#374151}
+.feat-text.muted{color:#9ca3af;text-decoration:line-through}
+.feat-highlight{font-weight:800;color:var(--purple)}
+
+/* COMPARISON */
+.compare-section{background:var(--soft);padding:64px 48px}
+.compare-inner{max-width:760px;margin:0 auto}
+.compare-title{font-family:'Manrope',sans-serif;font-size:28px;font-weight:900;text-align:center;margin-bottom:40px;letter-spacing:-0.5px}
+.compare-table{width:100%;border-collapse:collapse;background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 2px 20px rgba(0,0,0,.06)}
+.compare-table th{padding:16px 20px;font-size:13px;font-weight:800;text-align:left;background:#fff;border-bottom:2px solid var(--border)}
+.compare-table th:last-child{text-align:center;color:var(--purple)}
+.compare-table td{padding:14px 20px;font-size:14px;border-bottom:1px solid #f3f4f6}
+.compare-table td:last-child{text-align:center;font-weight:700}
+.compare-table tr:last-child td{border-bottom:none}
+.compare-table tr:hover td{background:#fafafa}
+.yes{color:#059669;font-size:18px}
+.no{color:#d1d5db;font-size:18px}
+
+/* FAQ */
+.faq-section{padding:64px 48px;background:#fff}
+.faq-inner{max-width:680px;margin:0 auto}
+.faq-title{font-family:'Manrope',sans-serif;font-size:28px;font-weight:900;text-align:center;margin-bottom:36px;letter-spacing:-0.5px}
+.faq-item{border:1px solid var(--border);border-radius:14px;margin-bottom:10px;overflow:hidden}
+.faq-q{padding:18px 20px;font-size:14px;font-weight:700;display:flex;justify-content:space-between;align-items:center;cursor:pointer;background:#fff}
+.faq-q:hover{background:var(--soft)}
+.faq-icon{font-size:20px;color:var(--purple);transition:transform .2s;line-height:1}
+.faq-a{padding:0 20px 18px;font-size:14px;color:var(--muted);line-height:1.7;display:none}
+.faq-item.open .faq-a{display:block}
+.faq-item.open .faq-icon{transform:rotate(45deg)}
+
+/* CTA */
+.cta{background:linear-gradient(135deg,#1a0a3c,#2d1465);padding:72px 48px;text-align:center;position:relative;overflow:hidden}
+.cta::before{content:'';position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(247,75,139,.2) 0%,transparent 70%);top:-200px;right:-100px}
+.cta h2{font-family:'Manrope',sans-serif;font-size:clamp(28px,4vw,42px);font-weight:900;color:#fff;margin-bottom:12px;letter-spacing:-1px;position:relative;z-index:1}
+.cta p{font-size:16px;color:rgba(255,255,255,.65);margin-bottom:36px;position:relative;z-index:1}
+.cta-btn{background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff;border:none;border-radius:50px;padding:16px 44px;font-size:17px;font-weight:800;cursor:pointer;font-family:inherit;box-shadow:0 8px 32px rgba(124,92,252,.4);transition:transform .2s;position:relative;z-index:1}
+.cta-btn:hover{transform:translateY(-3px)}
+
+footer{background:#0a0a18;color:rgba(255,255,255,.35);padding:28px 48px;text-align:center;font-size:13px}
+footer a{color:rgba(255,255,255,.35);text-decoration:none;margin:0 10px}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;border-radius:24px;padding:40px;width:100%;max-width:460px;position:relative;box-shadow:0 24px 80px rgba(0,0,0,.2)}
+.modal-close{position:absolute;top:16px;right:20px;background:none;border:none;font-size:24px;cursor:pointer;color:var(--muted);line-height:1}
+.modal h2{font-family:'Manrope',sans-serif;font-size:22px;font-weight:900;margin-bottom:4px}
+.modal-sub{font-size:13px;color:var(--muted);margin-bottom:24px}
+.order-box{background:var(--soft);border-radius:14px;padding:16px 20px;margin-bottom:24px;display:flex;justify-content:space-between;align-items:center}
+.order-name{font-weight:800;font-size:15px}
+.order-cycle{font-size:12px;color:var(--muted);margin-top:2px}
+.order-price{font-family:'Manrope',sans-serif;font-weight:900;font-size:22px;color:var(--purple)}
+#card-element{background:#f9fafb;border:1.5px solid var(--border);border-radius:12px;padding:14px;margin-bottom:12px;transition:border-color .15s}
+#card-errors{color:#dc2626;font-size:13px;margin-bottom:12px;min-height:18px}
+.pay-btn{width:100%;padding:14px;background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 20px rgba(124,92,252,.4);transition:all .15s}
+.pay-btn:hover{transform:translateY(-1px);box-shadow:0 8px 28px rgba(124,92,252,.5)}
+.pay-btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.secure{text-align:center;font-size:12px;color:var(--muted);margin-top:12px}
+
+@media(max-width:768px){
+  .plans-grid{grid-template-columns:1fr}
+  nav{padding:0 20px}
+  .hero{padding:60px 20px 48px}
+  .plans-wrap,.compare-section,.faq-section{padding:48px 20px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo">Career<span>Sprint</span><span class="logo-dot"></span></a>
+  <div class="nav-right">
+    <a href="login.html" class="btn-ghost">Log in</a>
+    <a href="signup.html" class="btn-nav-primary" style="color:#fff;">Get Started</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">💼 Simple, honest pricing</div>
+  <h1>One plan. <span>Everything included.</span></h1>
+  <p>Start free, upgrade to Pro when you're ready to land offers fast. No hidden fees.</p>
+  <div class="toggle-wrap">
+    <span class="toggle-label active" id="mlbl">Monthly</span>
+    <button class="toggle" id="tog" onclick="toggleBilling()"><div class="toggle-thumb"></div></button>
+    <span class="toggle-label" id="ylbl">Yearly &nbsp;<span class="save-tag">Save 35%</span></span>
+  </div>
+</section>
+
+<!-- PLANS -->
+<section class="plans-wrap">
+  <div class="plans-inner">
+    <div class="plans-grid">
+
+      <!-- FREE -->
+      <div class="plan-card">
+        <div class="plan-tag">Free</div>
+        <div class="plan-price"><sup>$</sup>0<span class="per">/mo</span></div>
+        <div class="yearly-price">&nbsp;</div>
+        <p class="plan-desc">Try CareerSprint with basic features. Great for exploring — but limited on purpose.</p>
+        <button class="plan-btn plan-btn-free" onclick="window.location.href='signup.html'">Get Started Free</button>
+        <hr class="divider">
+        <div class="features-title">What's included</div>
+        <div class="features-list">
+          <div class="feat"><div class="feat-icon feat-yes">✓</div><span class="feat-text"><b>3</b> job applications (one time)</span></div>
+          <div class="feat"><div class="feat-icon feat-yes">✓</div><span class="feat-text"><b>1</b> resume template (one time)</span></div>
+          <div class="feat"><div class="feat-icon feat-yes">✓</div><span class="feat-text"><b>1</b> cover letter (one time)</span></div>
+          <div class="feat"><div class="feat-icon feat-no">✗</div><span class="feat-text muted">AI resume tailoring</span></div>
+          <div class="feat"><div class="feat-icon feat-no">✗</div><span class="feat-text muted">Auto-apply to jobs</span></div>
+          <div class="feat"><div class="feat-icon feat-no">✗</div><span class="feat-text muted">Unlimited cover letters</span></div>
+          <div class="feat"><div class="feat-icon feat-no">✗</div><span class="feat-text muted">ATS score optimizer</span></div>
+          <div class="feat"><div class="feat-icon feat-no">✗</div><span class="feat-text muted">Priority support</span></div>
+        </div>
+      </div>
+
+      <!-- PRO -->
+      <div class="plan-card pro">
+        <div class="pro-badge">⚡ Most Popular</div>
+        <div class="plan-tag">Pro</div>
+        <div class="plan-price" id="proAmt"><sup>$</sup> 26.99<span class="per">/mo</span></div>
+        <div class="yearly-price" id="yearlyNote">&nbsp;</div>
+        <p class="plan-desc">Everything you need to go from job search to offer — fast. Used by 1M+ job seekers.</p>
+        <button class="plan-btn plan-btn-pro" onclick="openCheckout()">Start Pro Plan →</button>
+        <hr class="divider">
+        <div class="features-title">Everything in Free, plus</div>
+        <div class="features-list">
+          <div class="feat"><div class="feat-icon feat-yes">✓</div><span class="feat-text"><span class="feat-highlight">Unlimited</span> job applications</span></div>
+          <div class="feat"><div class="feat-icon feat-yes">✓</div><span class="feat-text"><span class="feat-highlight">AI resume tailoring</span> per job</span></div>
+          <div class="feat"><div class="feat-icon feat-yes">✓</div><span class="feat-text">Unlimited cover letters</span></div>
+          <div class="feat"><div class="feat-icon feat-yes">✓</div><span class="feat-text"><span class="feat-highlight">Auto-apply</span> to 200 jobs/mo</span></div>
+          <div class="feat"><div class="feat-icon feat-yes">✓</div><span class="feat-text">ATS score optimizer</span></div>
+          <div class="feat"><div class="feat-icon feat-yes">✓</div><span class="feat-text">All premium resume templates</span></div>
+          <div class="feat"><div class="feat-icon feat-yes">✓</div><span class="feat-text">Real-time job match alerts</span></div>
+          <div class="feat"><div class="feat-icon feat-yes">✓</div><span class="feat-text">Priority email support</span></div>
+          <div class="feat"><div class="feat-icon feat-yes">✓</div><span class="feat-text">Cancel anytime</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- COMPARISON TABLE -->
+<section class="compare-section">
+  <div class="compare-inner">
+    <h2 class="compare-title">Free vs Pro — at a glance</h2>
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th>Free</th>
+          <th style="color:var(--purple)">Pro $26.99/mo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Job applications</td><td>3 (one time)</td><td class="yes">Unlimited</td></tr>
+        <tr><td>Resume templates</td><td>1 (one time)</td><td class="yes">All premium</td></tr>
+        <tr><td>Cover letters</td><td>1 (one time)</td><td class="yes">Unlimited</td></tr>
+        <tr><td>AI resume tailoring</td><td class="no">✗</td><td class="yes">✓</td></tr>
+        <tr><td>Auto-apply to jobs</td><td class="no">✗</td><td class="yes">200/month</td></tr>
+        <tr><td>ATS score optimizer</td><td class="no">✗</td><td class="yes">✓</td></tr>
+        <tr><td>Job match alerts</td><td class="no">✗</td><td class="yes">✓</td></tr>
+        <tr><td>Priority support</td><td class="no">✗</td><td class="yes">✓</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section">
+  <div class="faq-inner">
+    <h2 class="faq-title">Got questions?</h2>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">Can I cancel anytime? <span class="faq-icon">+</span></div>
+      <div class="faq-a">Yes — cancel anytime with no questions asked. You keep access until the end of your billing period.</div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">What happens after my free trial? <span class="faq-icon">+</span></div>
+      <div class="faq-a">The free plan has no time limit — you just get limited features. You can upgrade to Pro whenever you're ready to unlock everything.</div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">How does auto-apply work? <span class="faq-icon">+</span></div>
+      <div class="faq-a">Our AI finds matching jobs, tailors your resume and cover letter, and applies on your behalf — automatically. You just review results in your dashboard.</div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">Is my payment secure? <span class="faq-icon">+</span></div>
+      <div class="faq-a">Yes — all payments are processed by Stripe, the industry standard for online payments. We never store your card details.</div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">Do you offer refunds? <span class="faq-icon">+</span></div>
+      <div class="faq-a">We offer a 7-day money-back guarantee. If you're not happy, email us and we'll refund you — no questions asked.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <h2>Start landing offers today 🚀</h2>
+  <p>Join 1,166,440+ job seekers already using CareerSprint</p>
+  <button class="cta-btn" onclick="openCheckout()">Get Pro — $26.99/mo →</button>
+</section>
+
+<footer>
+  © 2026 CareerSprint &nbsp;|&nbsp;
+  <a href="#">Privacy</a><a href="#">Terms</a><a href="#">Contact</a>
+</footer>
+
+<!-- CHECKOUT MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeCheckout()">×</button>
+    <h2>Upgrade to Pro 🚀</h2>
+    <p class="modal-sub">You're one step away from landing your dream job!</p>
+    <div class="order-box">
+      <div>
+        <div class="order-name">CareerSprint Pro</div>
+        <div class="order-cycle" id="orderCycle">Billed monthly · Cancel anytime</div>
+      </div>
+      <div class="order-price" id="orderPrice">$26.99/mo</div>
+    </div>
+    <div id="card-element"></div>
+    <div id="card-errors"></div>
+    <button class="pay-btn" id="payBtn" onclick="handlePayment()">Pay Now →</button>
+    <p class="secure">🔒 Secured by Stripe · 256-bit SSL encryption</p>
+  </div>
+</div>
+
+<script>
+const stripe = Stripe('pk_test_51TOBRs0TWT3MiMjox3oNeCEhMdGvQ0iaeMr1ZhWVV5VThd0KgWtPfYXVj96MDKSz5TEZKWOr2j6ZhmbMqf7i3fED00Im9COitM');
+const elements = stripe.elements();
+const card = elements.create('card',{style:{base:{fontFamily:'Plus Jakarta Sans,sans-serif',fontSize:'15px',color:'#0f0f1a','::placeholder':{color:'#9ca3af'}}}});
+card.mount('#card-element');
+card.on('change',e=>{document.getElementById('card-errors').textContent=e.error?e.error.message:''});
+
+let isYearly=false;
+
+function toggleBilling(){
+  isYearly=!isYearly;
+  const tog=document.getElementById('tog');
+  tog.classList.toggle('on',isYearly);
+  document.getElementById('mlbl').classList.toggle('active',!isYearly);
+  document.getElementById('ylbl').classList.toggle('active',isYearly);
+  if(isYearly){
+    document.getElementById('proAmt').innerHTML='<sup>$</sup>17<span class="per">/mo</span>';
+    document.getElementById('yearlyNote').textContent='Billed as $204/year (save $120)';
+    document.getElementById('orderPrice').textContent='$17/mo';
+    document.getElementById('orderCycle').textContent='Billed annually · Cancel anytime';
+  } else {
+    document.getElementById('proAmt').innerHTML='<sup>$</sup> 26.99<span class="per">/mo</span>';
+    document.getElementById('yearlyNote').innerHTML='&nbsp;';
+    document.getElementById('orderPrice').textContent='$26.99/mo';
+    document.getElementById('orderCycle').textContent='Billed monthly · Cancel anytime';
+  }
+}
+
+function openCheckout(){document.getElementById('modal').classList.add('open')}
+function closeCheckout(){document.getElementById('modal').classList.remove('open')}
+
+async function handlePayment(){
+  const btn=document.getElementById('payBtn');
+  btn.disabled=true;btn.textContent='Processing...';
+  const{paymentMethod,error}=await stripe.createPaymentMethod({type:'card',card});
+  if(error){
+    document.getElementById('card-errors').textContent=error.message;
+    btn.disabled=false;btn.textContent='Pay Now →';
+  } else {
+    btn.textContent='✓ Payment Successful!';
+    btn.style.background='#059669';
+    setTimeout(()=>{closeCheckout();window.location.href='dashboard.html';},1500);
+  }
+}
+
+function toggleFaq(el){el.classList.toggle('open')}
+document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)closeCheckout()});
+</script>
+</body>
+</html>
