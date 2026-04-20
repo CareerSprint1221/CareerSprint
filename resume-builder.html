@@ -349,7 +349,9 @@ ATS SCORE: [number between 85-99]`;
     });
 
     const data = await response.json();
-    if(data.error) throw new Error(data.error);
+    if(!response.ok || data.error) {
+      throw new Error('API Error ' + response.status + ': ' + (data.error || '') + ' | ' + JSON.stringify(data.details || data));
+    }
     const text = data.result;
     lastResumeText = text;
 
@@ -370,7 +372,7 @@ ATS SCORE: [number between 85-99]`;
     stopLoadingMessages();
     document.getElementById('loadingOverlay').classList.remove('active');
     document.getElementById('emptyState').style.display = 'flex';
-    alert('Something went wrong. Please try again.');
+    alert('Error: ' + (err.message || JSON.stringify(err)));
     console.error(err);
   }
 
