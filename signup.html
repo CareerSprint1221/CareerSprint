@@ -149,7 +149,7 @@ async function handleSignup(){
   btn.disabled=true;btn.textContent='Creating account...';
   const{data,error}=await sbClient.auth.signUp({email,password,options:{data:{full_name:name}}});
   if(error){showError(error.message);btn.disabled=false;btn.textContent='Create Account →';}
-  else{showSuccess('Account created! Check your email to confirm, then log in.');btn.textContent='✓ Check your email!';}
+  else{try{await fetch('/api/welcome',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,name})});}catch(e){console.log(e);}showSuccess('Account created! Redirecting...');btn.textContent='✓ Welcome!';setTimeout(()=>window.location.href='dashboard.html',1500);}
 }
 
 async function handleGoogle(){
