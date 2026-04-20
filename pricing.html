@@ -324,22 +324,46 @@ function toggleBilling(){
   }
 }
 
-function openCheckout(){document.getElementById('modal').classList.add('open')}
-function closeCheckout(){document.getElementById('modal').classList.remove('open')}
+async function openCheckout(){
+  const btn = event.target.closest('button') || event.target;
+  const origText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Loading...';
 
-async function handlePayment(){
-  const btn=document.getElementById('payBtn');
-  btn.disabled=true;btn.textContent='Processing...';
-  const{paymentMethod,error}=await stripe.createPaymentMethod({type:'card',card});
-  if(error){
-    document.getElementById('card-errors').textContent=error.message;
-    btn.disabled=false;btn.textContent='Pay Now →';
-  } else {
-    btn.textContent='✓ Payment Successful!';
-    btn.style.background='#059669';
-    setTimeout(()=>{closeCheckout();window.location.href='dashboard.html';},1500);
+  try {
+    // Get user email if logged in
+    let email = '';
+    try {
+      const sbClient = window.supabase.createClient(
+        'https://jxtcprqmmiwiljsjpoiw.supabase.co',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp4dGNwcnFtbWl3aWxqc2pwb2l3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY2MjY3MzgsImV4cCI6MjA5MjIwMjczOH0.hVXVNagzHq8Q2eYbM9nw3tsjfZEwVu99i_BB6uryLtk'
+      );
+      const { data: { session } } = await sbClient.auth.getSession();
+      if (session) email = session.user.email;
+    } catch(e) {}
+
+    const response = await fetch('/api/create-checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, plan: isYearly ? 'yearly' : 'monthly' })
+    });
+
+    const data = await response.json();
+    if (data.url) {
+      window.location.href = data.url;
+    } else {
+      alert('Error: ' + (data.error || 'Could not create checkout'));
+      btn.disabled = false;
+      btn.textContent = origText;
+    }
+  } catch(err) {
+    alert('Error: ' + err.message);
+    btn.disabled = false;
+    btn.textContent = origText;
   }
 }
+
+function closeCheckout(){}
 
 function toggleFaq(el){el.classList.toggle('open')}
 document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)closeCheckout()});
