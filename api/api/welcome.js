@@ -21,7 +21,7 @@ export default async function handler(req, res) {
         'Authorization': `Bearer ${apiKey}`
       },
       body: JSON.stringify({
-        from: 'CareerSprint <hello@aicareersprint.com>',
+        from: 'CareerSprint <onboarding@resend.dev>',
         to: email,
         subject: '🚀 Welcome to CareerSprint — Let\'s land your dream job!',
         html: `
