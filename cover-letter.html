@@ -143,12 +143,12 @@ textarea{min-height:120px;line-height:1.6}
 </div>
 
 <script>
-const supabase = window.supabase.createClient(
+const sbClient = window.supabase.createClient(
   'https://jxtcprqmmiwiljsjpoiw.supabase.co',
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp4dGNwcnFtbWl3aWxqc2pwb2l3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY2MjY3MzgsImV4cCI6MjA5MjIwMjczOH0.hVXVNagzHq8Q2eYbM9nw3tsjfZEwVu99i_BB6uryLtk'
 );
 
-supabase.auth.getSession().then(({data:{session}})=>{
+sbClient.auth.getSession().then(({data:{session}})=>{
   if(!session) window.location.href='login.html';
   else {
     const name = session.user.user_metadata?.full_name || '';
