@@ -122,7 +122,7 @@ input:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(124,92,252,.1)}
 </div>
 
 <script>
-const supabase = window.supabase.createClient(
+const sbClient = window.supabase.createClient(
   'https://jxtcprqmmiwiljsjpoiw.supabase.co',
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp4dGNwcnFtbWl3aWxqc2pwb2l3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY2MjY3MzgsImV4cCI6MjA5MjIwMjczOH0.hVXVNagzHq8Q2eYbM9nw3tsjfZEwVu99i_BB6uryLtk'
 );
@@ -136,16 +136,16 @@ async function handleLogin(){
   const btn=document.getElementById('loginBtn');
   if(!email||!password)return showError('Please fill in all fields.');
   btn.disabled=true;btn.textContent='Logging in...';
-  const{data,error}=await supabase.auth.signInWithPassword({email,password});
+  const{data,error}=await sbClient.auth.signInWithPassword({email,password});
   if(error){showError(error.message);btn.disabled=false;btn.textContent='Log In →';}
   else{showSuccess('Logged in! Redirecting...');setTimeout(()=>window.location.href='dashboard.html',1000);}
 }
 
 async function handleGoogle(){
-  await supabase.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.origin+'/dashboard.html'}});
+  await sbClient.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.origin+'/dashboard.html'}});
 }
 
-supabase.auth.getSession().then(({data:{session}})=>{
+sbClient.auth.getSession().then(({data:{session}})=>{
   if(session)window.location.href='dashboard.html';
 });
 </script>
